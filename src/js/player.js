@@ -1,12 +1,14 @@
 import { Actor, CollisionType, Color, Engine, Keys, Rectangle, Vector } from "excalibur";
 import { Platform } from "./platform";
 import { Coin } from "./coin";
+import { Enemy } from "./enemy";
 
 export class Player extends Actor {
 
     speed = 400;
     jump = false;
     score = 0;
+    hitpoints = 3;
 
     constructor() {
         super({ width: 50, height: 70, collisionType: CollisionType.Active });
@@ -19,7 +21,6 @@ export class Player extends Actor {
     
     onInitialize() {
         this.on("collisionstart", (event) => this.handleCollision(event));
-        this.on("collisionend", () => { this.jump = false; });
 
         this.body.rotation.toFixed()
     }
@@ -38,6 +39,7 @@ export class Player extends Actor {
         if (engine.input.keyboard.wasPressed(Keys.Space) && this.jump === true) {
             yspeed = -400; 
             this.jump = false;
+            console.log('hello')
         }
 
         this.vel = new Vector(xspeed, yspeed);
@@ -54,9 +56,6 @@ export class Player extends Actor {
     }
 
     handleCollision(event) {
-        if (event.other && event.contact && event.contact.ny < 0) {
-            this.jump = true;
-        }
 
         if (event.other.owner instanceof Platform) {
             this.jump = true;
@@ -68,12 +67,27 @@ export class Player extends Actor {
             this.score++
             // @ts-ignore
             this.scene.engine.ui.updateScore(this.score)
+        }
 
+        if (event.other.owner instanceof Enemy) {
+            console.log('hi')
+            if(event.side === 'bottom'){
+                event.other.owner.kill();
+            } else{
+                this.reduceHealth();
+            }
         }
     }
     outOfBounds() {
             this.pos = new Vector(400, 0);
             this.vel = Vector.Zero;
+            this.reduceHealth();
     }
+    reduceHealth() {
+    this.hitpoints--
+    console.log('hello')
+    // @ts-ignore
+    this.scene.engine.ui.showHealth(this.hitpoints)
+}
 }
 

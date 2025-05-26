@@ -5,6 +5,7 @@ import { Player } from './player.js'
 import { Platform } from './platform.js'
 import { UI } from './ui.js'
 import { Coin } from './coin.js'
+import { Enemy } from './enemy.js'
 
 const options = { 
     width: 800, height: 600, 
@@ -20,7 +21,6 @@ export class Game extends Engine {
     constructor() {
         super(options)
         this.start(ResourceLoader).then(() => this.startGame())
-        this.showDebug(true)  // hitboxen testen
     }
     startGame() {
         const player = new Player;
@@ -31,12 +31,15 @@ export class Game extends Engine {
         platform.pos = new Vector(400, 550);
         this.add(platform)
 
-        this.ui = new UI
+        this.ui = new UI(player);
         this.add(this.ui)
 
         const coin = new Coin;
         coin.pos = new Vector(100, 450)
         this.add(coin)
+
+        const enemy = new Enemy;
+        this.add(enemy)
 
     this.currentScene.camera.strategy.lockToActorAxis(player, Axis.X);
     }
