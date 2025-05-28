@@ -1,12 +1,9 @@
-import { Actor, CollisionType, Color, Rectangle } from "excalibur";
+import { Actor, CollisionType, Color, Graphic, Rectangle } from "excalibur";
+import { Resources } from "./resources";
 
 export class Platform extends Actor {
     constructor() {
-        super({ width: 800, height: 100, collisionType: CollisionType.Fixed })
-        this.graphics.use(new Rectangle({
-            width: 800,
-            height: 100,
-            color: Color.Gray 
-        }));
+        super({ width: Resources.Floor.width, height: 80, collisionType: CollisionType.Fixed })
+        this.graphics.use(Resources.Floor.toSprite());
     }
 }

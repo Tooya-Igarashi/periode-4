@@ -1,7 +1,8 @@
-import { Actor, CollisionType, Color, Engine, Keys, Rectangle, Vector } from "excalibur";
+import { Actor, CollisionType, Color, Engine, Keys, Rectangle, SpriteSheet, Vector, Animation, range } from "excalibur";
 import { Platform } from "./platform";
 import { Coin } from "./coin";
 import { Enemy } from "./enemy";
+import { Resources } from "./resources";
 
 export class Player extends Actor {
 
@@ -11,12 +12,41 @@ export class Player extends Actor {
     hitpoints = 3;
 
     constructor() {
-        super({ width: 50, height: 70, collisionType: CollisionType.Active });
-        this.graphics.use(new Rectangle({
-            width: 50,
-            height: 70,
-            color: Color.Green, 
-        }));
+        super({ width: 50, height: 50, collisionType: CollisionType.Active });
+
+        //     this.graphics.use(new Rectangle({
+        //     width: 50,
+        //     height: 70,
+        //     color: Color.Green, 
+        // }));
+
+        const runSheetIdle = SpriteSheet.fromImageSource({
+            image: Resources.Idle,
+            grid: {rows: 1, columns: 2, spriteWidth: 50, spriteHeight: 50}
+        })
+
+        const runSheetJump = SpriteSheet.fromImageSource({
+            image: Resources.Jump,
+            grid: {rows: 1, columns: 11, spriteWidth: 51.19, spriteHeight: 51}
+        })
+
+        const runSheetRun = SpriteSheet.fromImageSource({
+            image: Resources.Run,
+            grid: {rows: 1, columns: 4, spriteWidth: 51, spriteHeight: 51}
+        })
+
+        const idle = Animation.fromSpriteSheet(runSheetIdle, range (0, 1), 100)
+        const jump = Animation.fromSpriteSheet(runSheetJump, range (1, 10), 100)
+        const runRight = Animation.fromSpriteSheet(runSheetRun, range (1, 3), 100)
+        const runLeft = runRight.clone()
+        runLeft.flipHorizontal = true;
+
+        this.graphics.add("idle", idle);
+        this.graphics.add("jump", jump);
+        this.graphics.add("runRight", runRight);
+        this.graphics.add("runLeft", runLeft);
+
+        this.graphics.use("idle")
     }
     
     onInitialize() {
@@ -31,14 +61,21 @@ export class Player extends Actor {
 
         if (engine.input.keyboard.isHeld(Keys.Left)) {
             xspeed = -this.speed;
+
+            this.graphics.use("runLeft")
+
         }
         if (engine.input.keyboard.isHeld(Keys.Right)) {
             xspeed = this.speed;
+            this.graphics.use("runRight")
+
         }
 
         if (engine.input.keyboard.wasPressed(Keys.Space) && this.jump === true) {
             yspeed = -400; 
             this.jump = false;
+            this.graphics.use("jump")
+
             console.log('hello')
         }
 
@@ -81,7 +118,7 @@ export class Player extends Actor {
     outOfBounds() {
             this.pos = new Vector(400, 0);
             this.vel = Vector.Zero;
-            this.reduceHealth();
+            this.reduceHealth()
     }
     reduceHealth() {
     this.hitpoints--

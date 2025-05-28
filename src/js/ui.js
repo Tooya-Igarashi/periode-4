@@ -1,20 +1,15 @@
-import { Actor, Circle, Color, Font, Label, None, Vector } from "excalibur";
+import { Actor, Circle, Color, Font, Label, None, ScreenElement, Vector } from "excalibur";
 import { Resources } from "./resources";
 
-export class UI extends Actor{
+export class UI extends ScreenElement{
     label
     lives = []
-    player
 
-    constructor(player){
-        super()
-        this.player = player
-    }
 
 onInitialize(engine) {
         this.label = new Label({
             text: 'Score 0',
-            pos: new Vector(-500, 40),
+            pos: new Vector(50, 40),
             font: new Font({
                 size: 20,
                 family: 'Open Sans',
@@ -37,15 +32,6 @@ onInitialize(engine) {
         }
 }
 
-onPreUpdate(engine) {
-    if(this.player){
-        this.label.pos = this.player.pos.add(new Vector(-390, -350))
-
-        for (let i = 0; i < this.lives.length; i++) {
-            this.lives[i].pos = this.player.pos.add(new Vector(300 + i * 35, -350))
-        }
-    }
-}
 showHealth(livesLeft) {
     for (let i = 0; i < this.lives.length; i++) {
             const sprite = Resources.Heart.toSprite()
