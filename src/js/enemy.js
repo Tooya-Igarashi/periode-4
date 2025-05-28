@@ -16,7 +16,7 @@ export class Enemy extends Actor {
 
             const runSheet = SpriteSheet.fromImageSource({
             image: Resources.Enemy,
-            grid: {rows: 1, columns: 24, spriteWidth: 24, spriteHeight: 24}
+            grid: {rows: 1, columns: 24, spriteWidth: 39.41, spriteHeight: 39}
         })
             const walkRight = Animation.fromSpriteSheet(runSheet, range (4, 9), 100)
             const walkLeft = walkRight.clone()

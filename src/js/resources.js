@@ -11,6 +11,7 @@ const Resources = {
     Run: new ImageSource('images/Run.png'),
     Jump: new ImageSource('images/Jump.png'),
     Enemy: new ImageSource('images/mort.png'),
+    Coin: new ImageSource('images/coin.png'),
 }
 
 
