@@ -12,7 +12,7 @@ export class Player extends Actor {
     #speed = 400;
     #jump = false;
     score = 0;
-    #hitpoints = 3;
+    hitpoints = 3;
 
     constructor() {
         super({ width: 50, height: 50, collisionType: CollisionType.Active });
@@ -145,14 +145,14 @@ export class Player extends Actor {
             this.#reduceHealth()
     }
     #reduceHealth() {
-    this.#hitpoints--
+    this.hitpoints--
     console.log('hello')
     // @ts-ignore
-    this.scene.engine.ui.showHealth(this.#hitpoints)
+    this.scene.engine.ui.showHealth(this.hitpoints)
 }
 
     gameOver() {
-        if (this.#hitpoints === 1) {
+        if (this.hitpoints === 1) {
             this.highScore();
             // @ts-ignore
             this.scene.engine.ui.GameOverMessage()
@@ -162,7 +162,6 @@ export class Player extends Actor {
 
     highScore(){
         const currentHigh = Number(localStorage.getItem('highscore')) || 0;
-    // If the player's score is higher, update localStorage
     if (this.score > currentHigh) {
         localStorage.setItem('highscore', this.score.toString());
     }

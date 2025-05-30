@@ -11,7 +11,7 @@ import { Obstacle } from './obstacle.js'
 import { SmallObstacle } from './smallObstacle.js'
 import { SuperCoin } from './superCoin.js'
 
-const options = { 
+const options = {
     width: 800, height: 600, 
     physics: {
         solver: SolverStrategy.Realistic,

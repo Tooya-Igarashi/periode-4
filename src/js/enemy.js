@@ -3,8 +3,8 @@ import { Player } from "./player.js";
 import { Resources } from "./resources.js";
 
 export class Enemy extends Actor {
-    speed = 100;
-    direction = 1; // 1 for right, -1 for left
+    #speed = 100;
+    #direction = 1; // 1 for right, -1 for left
 
     #right
     #left
@@ -35,11 +35,11 @@ export class Enemy extends Actor {
         
         }
     onPreUpdate(engine, delta) {
-        this.vel = new Vector(this.speed * this.direction, this.vel.y);
+        this.vel = new Vector(this.#speed * this.#direction, this.vel.y);
 
         // walling path of enemy, need to adjust later on
-        if (this.pos.x < this.#right) this.direction = 1, this.graphics.use("walkRight");
-        if (this.pos.x > this.#left) this.direction = -1, this.graphics.use("walkLeft");
+        if (this.pos.x < this.#right) this.#direction = 1, this.graphics.use("walkRight");
+        if (this.pos.x > this.#left) this.#direction = -1, this.graphics.use("walkLeft");
 
         this.rotation = 0;
         this.angularVelocity = 0;

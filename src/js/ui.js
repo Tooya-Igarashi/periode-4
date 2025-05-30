@@ -3,7 +3,7 @@ import { Resources } from "./resources";
 
 export class UI extends ScreenElement{
     #label
-    #lives = []
+    lives = []
     highscoreLabel
 
 
@@ -29,7 +29,7 @@ onInitialize(engine) {
             sprite.scale = new Vector(0.25, 0.2)
             life.graphics.use(sprite)
             this.addChild(life);
-            this.#lives.push(life);
+            this.lives.push(life);
         }
 
         this.highscoreLabel = new Label({
@@ -47,13 +47,13 @@ onInitialize(engine) {
 }
 
 showHealth(livesLeft) {
-    for (let i = 0; i < this.#lives.length; i++) {
+    for (let i = 0; i < this.lives.length; i++) {
             const sprite = Resources.Heart.toSprite()
             sprite.scale = new Vector(0.25, 0.2)
         if (i < livesLeft) {
-            this.#lives[i].graphics.use(sprite);
+            this.lives[i].graphics.use(sprite);
         } else {
-            this.#lives[i].graphics.use(sprite.tint = Color.Gray);
+            this.lives[i].graphics.use(sprite.tint = Color.Gray);
         }
     }
 }
