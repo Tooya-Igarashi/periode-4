@@ -1,15 +1,18 @@
-import { Actor, CollisionType, Color, Engine, Keys, Rectangle, SpriteSheet, Vector, Animation, range } from "excalibur";
+import { Actor, CollisionType, Color, Engine, Keys, Rectangle, SpriteSheet, Vector, Animation, range, Label, Font } from "excalibur";
 import { Platform } from "./platform";
 import { Coin } from "./coin";
 import { Enemy } from "./enemy";
 import { Resources } from "./resources";
+import { Finish } from "./finish";
+import { SmallObstacle } from "./smallObstacle";
+import { SuperCoin } from "./superCoin";
 
 export class Player extends Actor {
 
-    speed = 400;
-    jump = false;
+    #speed = 400;
+    #jump = false;
     score = 0;
-    hitpoints = 3;
+    #hitpoints = 3;
 
     constructor() {
         super({ width: 50, height: 50, collisionType: CollisionType.Active });
@@ -35,7 +38,7 @@ export class Player extends Actor {
             grid: {rows: 1, columns: 4, spriteWidth: 51, spriteHeight: 51}
         })
 
-        const idle = Animation.fromSpriteSheet(runSheetIdle, range (0, 1), 100)
+        const idle = Animation.fromSpriteSheet(runSheetIdle, range (0, 1), 500)
         const jump = Animation.fromSpriteSheet(runSheetJump, range (1, 10), 100)
         const runRight = Animation.fromSpriteSheet(runSheetRun, range (1, 3), 100)
         const runLeft = runRight.clone()
@@ -60,21 +63,18 @@ export class Player extends Actor {
         let yspeed = this.vel.y; 
 
         if (engine.input.keyboard.isHeld(Keys.Left)) {
-            xspeed = -this.speed;
-
+            xspeed = -this.#speed;
             this.graphics.use("runLeft")
-
         }
+
         if (engine.input.keyboard.isHeld(Keys.Right)) {
-            xspeed = this.speed;
+            xspeed = this.#speed;
             this.graphics.use("runRight")
+        } 
 
-        }
-
-        if (engine.input.keyboard.wasPressed(Keys.Space) && this.jump === true) {
+        if (engine.input.keyboard.wasPressed(Keys.Space) && this.#jump === true) {
             yspeed = -400; 
-            this.jump = false;
-            this.graphics.use("jump")
+            this.#jump = false;
 
             console.log('hello')
         }
@@ -88,14 +88,14 @@ export class Player extends Actor {
 
         //resets player if it falls out of bounds
         if (this.pos.y > 700){
-            this.outOfBounds()
+            this.#outOfBounds()
         }
     }
 
     handleCollision(event) {
 
-        if (event.other.owner instanceof Platform) {
-            this.jump = true;
+        if (event.other.owner instanceof Platform || SmallObstacle) {
+            this.#jump = true;
         }
 
         if (event.other.owner instanceof Coin){
@@ -106,25 +106,66 @@ export class Player extends Actor {
             this.scene.engine.ui.updateScore(this.score)
         }
 
+        if (event.other.owner instanceof SuperCoin){
+            event.other.owner.kill();
+
+            this.score += 100
+            // @ts-ignore
+            this.scene.engine.ui.updateScore(this.score)
+        }
+
         if (event.other.owner instanceof Enemy) {
             console.log('hi')
-            if(event.side === 'bottom'){
+            if(this.pos.y < event.other.owner.pos.y){
                 event.other.owner.kill();
+
+                this.score += 10
+                // @ts-ignore
+                this.scene.engine.ui.updateScore(this.score)
+
+                this.vel.y = -400; 
             } else{
-                this.reduceHealth();
+                this.gameOver()
+                this.#reduceHealth();
             }
         }
+
+        if (event.other.owner instanceof Finish) {
+            this.highScore();
+            // @ts-ignore
+            this.scene.engine.ui.showVictoryMessage()
+            this.kill()
+        }
+
     }
-    outOfBounds() {
+    #outOfBounds() {
+            this.gameOver()
             this.pos = new Vector(400, 0);
             this.vel = Vector.Zero;
-            this.reduceHealth()
+            this.#reduceHealth()
     }
-    reduceHealth() {
-    this.hitpoints--
+    #reduceHealth() {
+    this.#hitpoints--
     console.log('hello')
     // @ts-ignore
-    this.scene.engine.ui.showHealth(this.hitpoints)
+    this.scene.engine.ui.showHealth(this.#hitpoints)
 }
+
+    gameOver() {
+        if (this.#hitpoints === 1) {
+            this.highScore();
+            // @ts-ignore
+            this.scene.engine.ui.GameOverMessage()
+            this.kill()
+        }
+    }
+
+    highScore(){
+        const currentHigh = Number(localStorage.getItem('highscore')) || 0;
+    // If the player's score is higher, update localStorage
+    if (this.score > currentHigh) {
+        localStorage.setItem('highscore', this.score.toString());
+    }
+    }
 }
 

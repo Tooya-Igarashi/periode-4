@@ -12,6 +12,10 @@ const Resources = {
     Jump: new ImageSource('images/Jump.png'),
     Enemy: new ImageSource('images/mort.png'),
     Coin: new ImageSource('images/coin.png'),
+    Background: new ImageSource('images/Background.png'),
+    Vending: new ImageSource('images/VendingMachine_Moss.png'),
+    ObstacleMap: new ImageSource('images/Map_Moss.png'),
+    Goal: new ImageSource('images/house.png'),
 }
 
 
